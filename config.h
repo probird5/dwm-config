@@ -5,7 +5,10 @@ static const unsigned int borderpx  = 1;        /* border pixel of windows */
 static const unsigned int snap      = 32;       /* snap pixel */
 static const int showbar            = 1;        /* 0 means no bar */
 static const int topbar             = 1;        /* 0 means bottom bar */
-static const char *fonts[]          = { "monospace:size=10" };
+static const char *fonts[]          = {
+    "monospace:size=10",
+    "Noto Color Emoji:size=15" // Adjust the size as needed
+};
 static const char dmenufont[]       = "monospace:size=10";
 static const char col_gray1[]       = "#222222";
 static const char col_gray2[]       = "#444444";
@@ -60,6 +63,16 @@ static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() 
 static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray3, "-sb", col_cyan, "-sf", col_gray4, NULL };
 static const char *termcmd[]  = { "alacritty", NULL };
 
+/* for my media controls on laptop */
+
+static const char *upvol[]   = { "/usr/bin/pactl", "set-sink-volume", "@DEFAULT_SINK@", "+5%", NULL };
+static const char *downvol[] = { "/usr/bin/pactl", "set-sink-volume", "@DEFAULT_SINK@", "-5%", NULL };
+static const char *mutevol[] = { "/usr/bin/pactl", "set-sink-mute", "@DEFAULT_SINK@", "toggle", NULL };
+static const char *mutemic[] = { "/usr/bin/pactl", "set-source-mute", "@DEFAULT_SOURCE@", "toggle", NULL };
+static const char *brup[]    = { "/usr/bin/brightnessctl", "set", "+5%", NULL };
+static const char *brdown[]  = { "/usr/bin/brightnessctl", "set", "5%-", NULL };
+
+
 static const Key keys[] = {
 	/* modifier                     key        function        argument */
 	{ MODKEY,                       XK_p,      spawn,          {.v = dmenucmd } },
@@ -94,6 +107,12 @@ static const Key keys[] = {
 	TAGKEYS(                        XK_7,                      6)
 	TAGKEYS(                        XK_8,                      7)
 	TAGKEYS(                        XK_9,                      8)
+  { 0, XF86XK_AudioLowerVolume, spawn, {.v = downvol } },
+  { 0, XF86XK_AudioMute,        spawn, {.v = mutevol } },
+  { 0, XF86XK_AudioRaiseVolume, spawn, {.v = upvol   } },
+  { 0, XF86XK_AudioMicMute,     spawn, {.v = mutemic } },
+  { 0, XF86XK_MonBrightnessUp,   spawn, {.v = brup   } },
+  { 0, XF86XK_MonBrightnessDown, spawn, {.v = brdown } },
 	{ MODKEY|ShiftMask,             XK_q,      quit,           {0} },
 };
 
@@ -113,4 +132,6 @@ static const Button buttons[] = {
 	{ ClkTagBar,            MODKEY,         Button1,        tag,            {0} },
 	{ ClkTagBar,            MODKEY,         Button3,        toggletag,      {0} },
 };
+
+
 
