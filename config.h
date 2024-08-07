@@ -64,6 +64,7 @@ static const Layout layouts[] = {
 static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() */
 static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray3, "-sb", col_cyan, "-sf", col_gray4, NULL };
 static const char *termcmd[]  = { "alacritty", NULL };
+static const char *flameshotcmd[] = { "flameshot", "gui", NULL };
 
 /* for my media controls on laptop */
 
@@ -71,8 +72,8 @@ static const char *upvol[]   = { "/usr/bin/pactl", "set-sink-volume", "@DEFAULT_
 static const char *downvol[] = { "/usr/bin/pactl", "set-sink-volume", "@DEFAULT_SINK@", "-5%", NULL };
 static const char *mutevol[] = { "/usr/bin/pactl", "set-sink-mute", "@DEFAULT_SINK@", "toggle", NULL };
 static const char *mutemic[] = { "/usr/bin/pactl", "set-source-mute", "@DEFAULT_SOURCE@", "toggle", NULL };
-static const char *brup[]    = { "/usr/bin/brightnessctl", "set", "+5%", NULL };
-static const char *brdown[]  = { "/usr/bin/brightnessctl", "set", "5%-", NULL };
+static const char *brup[]    = { "brightnessctl", "set", "+5%", NULL };
+static const char *brdown[]  = { "brightnessctl", "set", "5%-", NULL };
 
 
 static const Key keys[] = {
@@ -92,8 +93,7 @@ static const Key keys[] = {
 	{ MODKEY,                       XK_t,      setlayout,      {.v = &layouts[0]} },
 	{ MODKEY,                       XK_f,      setlayout,      {.v = &layouts[1]} },
 	{ MODKEY,                       XK_m,      setlayout,      {.v = &layouts[2]} },
-  { MODKEY,                       XK_b,      setlayout,      {.v = &layouts[3]} }, /* bottom stack */
-  { MODKEY,                       XK_h,      setlayout,      {.v = &layouts[4]} }, /* horizontal bottom stack */
+        { MODKEY,                       XK_b,      setlayout,      {.v = &layouts[3]} }, /* bottom stack */
 	{ MODKEY,                       XK_space,  setlayout,      {0} },
 	{ MODKEY|ShiftMask,             XK_space,  togglefloating, {0} },
 	{ MODKEY,                       XK_0,      view,           {.ui = ~0 } },
@@ -111,13 +111,13 @@ static const Key keys[] = {
 	TAGKEYS(                        XK_7,                      6)
 	TAGKEYS(                        XK_8,                      7)
 	TAGKEYS(                        XK_9,                      8)
-  { 0, XF86XK_AudioLowerVolume, spawn, {.v = downvol } },
-  { 0, XF86XK_AudioMute,        spawn, {.v = mutevol } },
-  { 0, XF86XK_AudioRaiseVolume, spawn, {.v = upvol   } },
-  { 0, XF86XK_AudioMicMute,     spawn, {.v = mutemic } },
-  { 0, XF86XK_MonBrightnessUp,   spawn, {.v = brup   } },
-  { 0, XF86XK_MonBrightnessDown, spawn, {.v = brdown } },
 	{ MODKEY|ShiftMask,             XK_q,      quit,           {0} },
+        { 0, XF86XK_AudioLowerVolume,  spawn,  SHCMD("amixer sset Master 5%- unmute") },
+        { 0, XF86XK_AudioMute,         spawn,  SHCMD("amixer sset Master $(amixer get Master | grep -q '\\[on\\]' && echo 'mute' || echo 'unmute')") },
+        { 0, XF86XK_AudioRaiseVolume,  spawn,  SHCMD("amixer sset Master 5%+ unmute") },
+	{ 0, XF86XK_MonBrightnessUp,   spawn,  {.v = brup } },
+        { 0, XF86XK_MonBrightnessDown, spawn,  {.v = brdown } },
+	{ 0, XK_Print, spawn, {.v = flameshotcmd } },
 };
 
 /* button definitions */
